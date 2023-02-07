@@ -30,8 +30,11 @@ class MSWordHandler:
         return Mm((section.page_width - section.left_margin - section.right_margin) / 36000)
 
     @staticmethod
-    def _assign_table_cells(cells, idx, text):
-        cells[idx].text = str(text)
+    def _assign_table_cells(cells, idx, text, is_header: bool = False):
+        # cells[idx].text = str(text)
+        run = cells[idx].paragraphs[0].add_run(str(text))
+        if is_header:
+            run.bold = True
 
     def header(self, *args, **kwargs):
         self.document.add_heading(*args, **kwargs)
@@ -39,17 +42,17 @@ class MSWordHandler:
     def paragraph(self, *args, **kwargs):
         self.document.add_paragraph(*args, **kwargs)
 
-    def embed_df(self, df: DataFrame, title: str):
+    def embed_df(self, df: DataFrame, title: str = ""):
         logging.debug(f"Add table of shape '{df.shape}'")
         self.paragraph()
         if len(title) == 0:
-            title = f"Таблица {self._image_counter} – {df.name}"
+            title = f"Таблица {self._table_counter} – {df.name}"
         self.paragraph(title, style="Caption")
         self._table_counter += 1
         rendering_table = self.document.add_table(rows=1, cols=df.shape[1], style="Table Grid")
         cells = rendering_table.rows[0].cells
         for idx, i in enumerate(df.columns):
-            self._assign_table_cells(cells, idx, i)
+            self._assign_table_cells(cells, idx, i, is_header=True)
         for values in df.fillna("").astype(str).values:
             cells = rendering_table.add_row().cells
             for idx, i in enumerate(values):
@@ -73,7 +76,7 @@ class MSWordHandler:
         self.document.save(output_file)
         logging.info(f"Saved document: '{output_file}'")
 
-    def render(self):
+    def render(self, output_dir):
         # Document creation routines
         pass
 
