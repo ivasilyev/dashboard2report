@@ -6,7 +6,7 @@ from docx import Document
 from docx.shared import Mm
 from pandas import DataFrame
 from utils import datetime_now
-from grafana_panel_handler import GrafanaPanelHandler
+from image_handler import ImageHandler
 
 
 class MSWordHandler:
@@ -31,7 +31,6 @@ class MSWordHandler:
 
     @staticmethod
     def _assign_table_cells(cells, idx, text, is_header: bool = False):
-        # cells[idx].text = str(text)
         run = cells[idx].paragraphs[0].add_run(str(text))
         if is_header:
             run.bold = True
@@ -42,8 +41,10 @@ class MSWordHandler:
     def paragraph(self, *args, **kwargs):
         self.document.add_paragraph(*args, **kwargs)
 
-    def embed_df(self, df: DataFrame, title: str = ""):
+    def embed_df(self, df: DataFrame, title: str = "", description: str = ""):
         logging.debug(f"Add table of shape '{df.shape}'")
+        if len(description) > 0:
+            self.paragraph(description.format(self._table_counter), style="Normal")
         self.paragraph()
         if len(title) == 0:
             title = f"Таблица {self._table_counter} – {df.name}"
@@ -59,8 +60,10 @@ class MSWordHandler:
                 self._assign_table_cells(cells, idx, i)
         self.paragraph()
 
-    def embed_image(self, handler: GrafanaPanelHandler, title: str = "", comment: str = ""):
+    def embed_image(self, handler: ImageHandler, title: str = "", description: str = ""):
         logging.debug(f"Add image '{handler.title}'")
+        if len(description) > 0:
+            self.paragraph(description.format(self._image_counter), style="Normal")
         self.paragraph()
         self.document.add_picture(handler.file, width=self._text_width)
         if len(title) == 0:
@@ -68,15 +71,13 @@ class MSWordHandler:
         self.paragraph(title, style="Caption")
         self._image_counter += 1
         self.paragraph()
-        if len(comment) > 0:
-            self.paragraph(comment, style="Normal")
 
     def save(self, output_dir: str):
         output_file = os.path.join(output_dir, f"build-{datetime_now()}.docx")
         self.document.save(output_file)
         logging.info(f"Saved document: '{output_file}'")
 
-    def render(self, output_dir):
+    def render(self, output_dir: str):
         # Document creation routines
         pass
 

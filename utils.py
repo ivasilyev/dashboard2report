@@ -60,4 +60,4 @@ def parse_epoch(timestamp: int, fmt: str = STRAIGHT_DATETIME):
 def dump_tsv(df, file: str):
     os.makedirs(os.path.dirname(file), exist_ok=True)
     df.to_csv(file, sep="\t", header=True, index=False)
-    logging.debug(f"Saved dataframe of shape {df.shape} into file '{file}'")
+    logging.info(f"Saved dataframe of shape {df.shape} into file '{file}'")
