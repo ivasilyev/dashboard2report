@@ -15,11 +15,14 @@ def parse_args():
     )
     parser.add_argument("-l", "--link", metavar="<str>", required=True, type=str,
                         help="URI to any Grafana dashboard with the required time range selected")
+    parser.add_argument("-g", "--logging", metavar="<int>", default=2, type=int, choices=list(range(1, 6)),
+                        help="Logging level from 1 (DEBUG) to 5 (CRITICAL), inclusive")
     parser.add_argument("-o", "--output", metavar="<directory>", required=True,
                         help="Output directory")
     _namespace = parser.parse_args()
     return (
         _namespace.link,
+        _namespace.logging,
         _namespace.output,
     )
 
@@ -40,11 +43,12 @@ def parse_link(link: str):
 if __name__ == '__main__':
     (
         input_link,
+        input_logging,
         input_dir
     ) = parse_args()
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=input_logging * 10,
         format=LOGGING_TEMPLATE
     )
 
