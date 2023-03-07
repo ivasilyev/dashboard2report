@@ -19,9 +19,10 @@ class GrafanaPanelHandler(ImageHandler):
             dashboard_alias: str = "",
             server_name: str = "",
             panel_id: str = "",
-            query_params=None
+            query_params=None,
+            description: str = ""
     ):
-        super().__init__(title, file)
+        super().__init__(title, file, description)
         self.dashboard_id = dashboard_id
         self.dashboard_alias = dashboard_alias
         self.time_from = time_from
