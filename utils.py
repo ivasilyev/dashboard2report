@@ -61,3 +61,18 @@ def dump_tsv(df, file: str):
     os.makedirs(os.path.dirname(file), exist_ok=True)
     df.to_csv(file, sep="\t", header=True, index=False)
     logging.info(f"Saved dataframe of shape {df.shape} into file '{file}'")
+
+
+def count_mma_from_df(df):
+    import pandas as pd
+    metrics = list()
+    for col_name in df.columns:
+        if not pd.api.types.is_numeric_dtype(df[col_name]):
+            continue
+        metrics.append(dict(
+            column_name=col_name,
+            mean=df[col_name].min(),
+            max=df[col_name].max(),
+            avg=df[col_name].mean()
+        ))
+    return pd.DataFrame(metrics).set_index("column_name")
