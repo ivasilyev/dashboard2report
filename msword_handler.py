@@ -42,6 +42,9 @@ class MSWordHandler:
         self.document.add_paragraph(*args, **kwargs)
 
     def embed_df(self, df: DataFrame, title: str = "", description: str = ""):
+        if df.shape[1] == 0:
+            logging.critical("The table has no rows")
+            return
         logging.debug(f"Add table of shape '{df.shape}'")
         if len(description) > 0:
             self.paragraph(description.format(self._table_counter), style="Normal")
@@ -61,6 +64,9 @@ class MSWordHandler:
         self.paragraph()
 
     def embed_image(self, handler: ImageHandler, title: str = "", description: str = ""):
+        if not os.path.isfile(handler.file):
+            logging.critical("The image file does not exist")
+            return
         logging.debug(f"Add image '{handler.title}'")
         if len(description) > 0:
             self.paragraph(description.format(self._image_counter), style="Normal")
