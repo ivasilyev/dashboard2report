@@ -76,3 +76,8 @@ def count_mma_from_df(df):
             avg=df[col_name].mean()
         ))
     return pd.DataFrame(metrics).set_index("column_name")
+
+
+def join_str_lines(s: str):
+    from re import sub
+    return sub("[\r\n ]+", " ", s)

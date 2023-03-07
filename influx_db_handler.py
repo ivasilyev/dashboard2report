@@ -2,11 +2,10 @@
 import os
 import logging
 import pandas as pd
-from influxdb import InfluxDBClient as Client
-from utils import load_dict, dump_tsv, datetime_now
-from constants import SECRET_JSON_PATH
-
 from urllib.parse import urlparse
+from influxdb import InfluxDBClient as Client
+from constants import SECRET_JSON_PATH
+from utils import join_str_lines, load_dict, dump_tsv, datetime_now
 
 
 class InfluxDBHandler:
@@ -32,7 +31,8 @@ class InfluxDBHandler:
             raise
 
     def query_to_df(self, query: str):
-        logging.debug("Execute query: {}".format(query))
+        q = join_str_lines(query)
+        logging.debug("Execute query: '{}'".format(q))
         df = pd.DataFrame(self.client.query(query).get_points())
         logging.debug(f"Parsed dataframe with shape '{df.shape}' and columns '{df.columns}'")
         dump_tsv(df, os.path.join(
