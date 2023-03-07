@@ -81,3 +81,16 @@ def count_mma_from_df(df):
 def join_str_lines(s: str):
     from re import sub
     return sub("[\r\n ]+", " ", s)
+
+
+def count_apdex(times: list, sla: float):
+    n = len(times)
+    ns = 0
+    nt = 0
+    for t in times:
+        if t < sla:
+            ns += 1
+        elif sla <= t < 4 * sla:
+            nt += 1
+    return (ns + (nt / 2)) / n
+
