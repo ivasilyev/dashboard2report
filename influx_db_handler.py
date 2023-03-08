@@ -27,7 +27,7 @@ class InfluxDBHandler:
         try:
             self._secret_dict.update(load_dict(file))
         except Exception:
-            logging.critical(f"The secret file is invalid : '{file}'")
+            logging.critical(f"The secret file is invalid: '{file}'")
             raise
 
     def query_to_df(self, query: str):
@@ -39,4 +39,3 @@ class InfluxDBHandler:
             self.output_dir, f"""influx-{self._secret_dict["influx_db_name"]}-{datetime_now()}.tsv"""
         ))
         return df
-

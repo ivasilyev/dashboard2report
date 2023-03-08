@@ -23,7 +23,7 @@ class SqlDBHandler:
         try:
             self._secret_dict.update(load_dict(file))
         except Exception:
-            logging.critical(f"The secret file is invalid : '{file}'")
+            logging.critical(f"The secret file is invalid: '{file}'")
             raise
 
     def query_to_df(self, query: str):

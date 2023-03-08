@@ -1,6 +1,7 @@
 
 import os
 import logging
+import pandas as pd
 from datetime import datetime
 from constants import TIMEZONE, REVERSED_DATETIME, STRAIGHT_DATETIME
 
@@ -57,30 +58,37 @@ def parse_epoch(timestamp: int, fmt: str = STRAIGHT_DATETIME):
     return tz.localize(datetime.fromtimestamp(timestamp / 1000)).strftime(fmt)
 
 
-def dump_tsv(df, file: str):
+def dump_tsv(df: pd.DataFrame, file: str):
     os.makedirs(os.path.dirname(file), exist_ok=True)
     df.to_csv(file, sep="\t", header=True, index=False)
     logging.info(f"Saved dataframe of shape {df.shape} into file '{file}'")
 
 
-def count_mma_from_df(df):
-    import pandas as pd
+def count_mma_from_df(df: pd.DataFrame):
     metrics = list()
-    for col_name in df.columns:
-        if not pd.api.types.is_numeric_dtype(df[col_name]):
+    for column in df.columns:
+        if not pd.api.types.is_numeric_dtype(df[column]):
             continue
         metrics.append(dict(
-            column_name=col_name,
-            mean=df[col_name].min(),
-            max=df[col_name].max(),
-            avg=df[col_name].mean()
+            column_name=column,
+            mean=df[column].min(),
+            max=df[column].max(),
+            avg=df[column].mean()
         ))
     return pd.DataFrame(metrics).set_index("column_name")
 
 
+def grouping_count_mma_from_df(df: pd.DataFrame, grouping_col_name: str, value_col_name: str):
+    return pd.concat([
+        df.groupby(grouping_col_name).min().rename(columns={value_col_name: "min"}),
+        df.groupby(grouping_col_name).max().rename(columns={value_col_name: "max"}),
+        df.groupby(grouping_col_name).mean().rename(columns={value_col_name: "avg"}),
+    ], axis=1, sort=False)
+
+
 def join_str_lines(s: str):
     from re import sub
-    return sub("[\r\n ]+", " ", s)
+    return sub("[\t\r\n ]+", " ", s)
 
 
 def count_apdex(times: list, sla: float):
@@ -94,3 +102,26 @@ def count_apdex(times: list, sla: float):
             nt += 1
     return (ns + (nt / 2)) / n
 
+
+def replace_df1_values_by_df2(
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+    replacing_col_name: str,
+    replacement_col_name: str,
+):
+    replacing_dict = {
+        i[0]: i[1]
+        for i in df2.loc[
+             :,
+             [replacing_col_name, replacement_col_name]
+         ].to_dict("split")["data"]
+    }
+    return df1.replace(replacing_dict)
+
+
+def format_df_numeric_values(df: pd.DataFrame, fmt: str = "{:.1f}"):
+    for column in df.columns:
+        if not pd.api.types.is_numeric_dtype(df[column]):
+            continue
+        df[column] = df[column].apply(fmt.format)
+    return df
