@@ -131,4 +131,4 @@ dmypy.json
 .idea*
 demo*
 production*
-secret.json
+production-1c_erp_lab_autoreport/secret.json

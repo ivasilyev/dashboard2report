@@ -103,11 +103,12 @@ def count_apdex(times: list, sla: float):
     return (ns + (nt / 2)) / n
 
 
-def replace_df1_values_by_df2(
+def rename_df1_by_df2(
     df1: pd.DataFrame,
     df2: pd.DataFrame,
     replacing_col_name: str,
     replacement_col_name: str,
+    rename_columns: bool = False,
 ):
     replacing_dict = {
         i[0]: i[1]
@@ -116,6 +117,8 @@ def replace_df1_values_by_df2(
              [replacing_col_name, replacement_col_name]
          ].to_dict("split")["data"]
     }
+    if rename_columns:
+        return df1.rename(columns=replacing_dict)
     return df1.replace(replacing_dict)
 
 

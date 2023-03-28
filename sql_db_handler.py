@@ -1,7 +1,6 @@
 
 import os
 import logging
-import psycopg2
 import sqlalchemy
 import pandas as pd
 from constants import SECRET_JSON_PATH

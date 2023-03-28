@@ -3,7 +3,7 @@
 influxdb
 pandas
 psycopg2
-sqlalchemy
 python-docx
 pytz
 requests
+sqlalchemy
