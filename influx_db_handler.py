@@ -1,41 +1,27 @@
 
-import os
-import logging
 import pandas as pd
+from db_handler import DBHandler
 from urllib.parse import urlparse
 from influxdb import InfluxDBClient as Client
-from constants import SECRET_JSON_PATH
-from utils import join_str_lines, load_dict, dump_tsv, datetime_now
 
 
-class InfluxDBHandler:
-    def __init__(self, output_dir: str):
-        self.output_dir = output_dir
-        self._secret_dict = dict()
-        self.update_secret()
-        uri = urlparse(self._secret_dict["influx_server_url"])
+class InfluxDBHandler(DBHandler):
+    def __init__(self, secret_file):
+        super().__init__(secret_file)
+        self.uri = self._secret_dict["influx_server_url"]
+        parsed = urlparse(self.uri)
         self.client = Client(
-            host=uri.hostname,
-            port=uri.port,
+            host=parsed.hostname,
+            port=parsed.port,
             database=self._secret_dict["influx_db_name"]
         )
+        self.export_prefix = "influx"
 
     def __del__(self):
         self.client.close()
-
-    def update_secret(self, file: str = SECRET_JSON_PATH):
-        try:
-            self._secret_dict.update(load_dict(file))
-        except Exception:
-            logging.critical(f"The secret file is invalid: '{file}'")
-            raise
+        super().__del__()
 
     def query_to_df(self, query: str):
-        q = join_str_lines(query)
-        logging.debug("Execute query: '{}'".format(q))
-        df = pd.DataFrame(self.client.query(query).get_points())
-        logging.debug(f"Parsed dataframe with shape '{df.shape}' and columns '{df.columns}'")
-        dump_tsv(df, os.path.join(
-            self.output_dir, f"""influx-{self._secret_dict["influx_db_name"]}-{datetime_now()}.tsv"""
-        ))
+        q = super().query_to_df(query)
+        df = pd.DataFrame(self.client.query(q).get_points())
         return df

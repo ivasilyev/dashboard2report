@@ -1,36 +1,21 @@
 
-import os
-import logging
 import sqlalchemy
 import pandas as pd
-from constants import SECRET_JSON_PATH
-from utils import load_dict, dump_tsv, datetime_now, join_str_lines
+from db_handler import DBHandler
 
 
-class SqlDBHandler:
-    def __init__(self, output_dir: str):
-        self.output_dir = output_dir
-        self._secret_dict = dict()
-        self.update_secret()
+class SqlDBHandler(DBHandler):
+    def __init__(self, secret_file):
+        super().__init__(secret_file)
         self.engine = sqlalchemy.create_engine(self._secret_dict["sql_db_uri"])
         self.client = self.engine.connect().execution_options(autocommit=True)
+        self.export_prefix = "sql"
 
     def __del__(self):
         self.client.close()
-
-    def update_secret(self, file: str = SECRET_JSON_PATH):
-        try:
-            self._secret_dict.update(load_dict(file))
-        except Exception:
-            logging.critical(f"The secret file is invalid: '{file}'")
-            raise
+        super().__del__()
 
     def query_to_df(self, query: str):
-        q = join_str_lines(query)
-        logging.debug("Execute query: '{}'".format(q))
-        df = pd.read_sql(sqlalchemy.text(query), con=self.client)
-        logging.debug(f"Parsed dataframe with shape '{df.shape}' and columns '{df.columns}'")
-        dump_tsv(df, os.path.join(
-            self.output_dir, f"""sql-{datetime_now()}.tsv"""
-        ))
+        q = super().query_to_df(query)
+        df = pd.read_sql(sqlalchemy.text(q), con=self.client)
         return df
