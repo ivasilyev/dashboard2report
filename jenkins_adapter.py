@@ -5,7 +5,7 @@ import re
 import logging
 from json import dumps
 from constants import LOGGING_TEMPLATE
-from msword_handler import MSWordHandler
+from msword_exporter import MSWordExporter
 
 
 def parse_args():
@@ -54,9 +54,9 @@ if __name__ == '__main__':
 
     link_dict = parse_link(input_link)
 
-    handler = MSWordHandler(
+    exporter = MSWordExporter(
         time_from=link_dict["time_from"],
         time_to=link_dict["time_to"],
         title="Результаты теста"
     )
-    handler.run(input_dir)
+    exporter.run(input_dir)

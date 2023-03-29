@@ -3,7 +3,7 @@
 
 import logging
 from constants import LOGGING_TEMPLATE
-from msword_handler import MSWordHandler
+from msword_exporter import MSWordExporter
 
 
 def parse_args():
@@ -38,9 +38,9 @@ if __name__ == '__main__':
         format=LOGGING_TEMPLATE
     )
 
-    handler = MSWordHandler(
+    exporter = MSWordExporter(
         time_from=input_time_from,
         time_to=input_time_to,
         title="Результаты теста"
     )
-    handler.run(input_dir)
+    exporter.run(input_dir)
