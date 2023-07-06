@@ -28,7 +28,6 @@ class ConfluenceExporter(Exporter):
         self,
         time_from: int,
         time_to: int,
-        secret_file: str,
         confluence_space_name: str,
         confluence_parent_page_name: str
     ):
