@@ -33,7 +33,7 @@ class GrafanaPanelHandler(ImageHandler):
         self.server_name = server_name
         self.panel_id = panel_id
         self.query_params = query_params
-        if is_dict_valid(self.query_params):
+        if not is_dict_valid(self.query_params):
             self.query_params = dict()
         logging.debug(f"Created {self}")
 

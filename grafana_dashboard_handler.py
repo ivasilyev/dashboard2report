@@ -117,7 +117,7 @@ class GrafanaDashboardHandler:
         output_dir: str = os.getcwd(),
         **kwargs
     ):
-        output_file = os.path.join(output_dir, f"dashboard-{dashboard_id}-{datetime_now}.json")
+        output_file = os.path.join(output_dir, f"dashboard-{dashboard_id}-{datetime_now()}.json")
         GrafanaDashboardHandler.download_json(dashboard_id, output_file)
         return GrafanaDashboardHandler.from_json(output_file, **kwargs)
 
