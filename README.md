@@ -5,6 +5,9 @@ Repo for automated creation of reports based on such sources as Grafana
 
 ```shell script
 sudo pip install -r "requirements.txt"
-touch "secret.json"
-touch "production-your-project.py"
+
+cp "secret.template.json" "secret.json"
+cp "main.py" "production-your-project.py"
+
+chmod +x "secret.json" "production-your-project.py"
 ```
