@@ -41,7 +41,7 @@ class GrafanaDashboardHandler:
     def __str__(self):
         return (
             f"Dashboard Handler with UID {self.dashboard_id} and title {self.dashboard_alias} for the time range "
-            f"from {self.time_from} to {self.time_to} with {len(self.panel_handlers.keys())}"
+            f"from {self.time_from} to {self.time_to} with {len(self.panel_handlers.keys())} panels"
         )
 
     @property
@@ -87,10 +87,12 @@ class GrafanaDashboardHandler:
                     query_params=query_params,
                     row_name=panel_row_spoiler_title
                 )
+        logging.debug(f"Loaded dashboard JSON with UID '{dashboard_id}'")
         return handler
 
     @staticmethod
     def from_json(file: str, **kwargs):
+        logging.debug(f"Loaded dashboard JSON from file '{file}'")
         kwargs["d"] = load_dict(file)
         return GrafanaDashboardHandler.from_dict(**kwargs)
 
@@ -99,12 +101,23 @@ class GrafanaDashboardHandler:
         dashboard_id: str,
         output_file: str
     ):
+        logging.debug(f"Download dashboard JSON with UID '{dashboard_id}' into: '{output_file}'")
         url = posixpath.join(secret_dict["gf_server_url"], "api/dashboards/uid", dashboard_id)
         get_file(
             url=url,
             file=output_file,
             headers={"Authorization": "Bearer {}".format(secret_dict["gf_token"])}
         )
+
+    @staticmethod
+    def from_remote(
+        dashboard_id: str,
+        output_dir: str = os.getcwd(),
+        **kwargs
+    ):
+        output_file = os.path.join(output_dir, f"{dashboard_id}.json")
+        GrafanaDashboardHandler.download_json(dashboard_id, output_file)
+        return GrafanaDashboardHandler.from_json(output_file, **kwargs)
 
     def download(self, output_dir: str = os.getcwd()):
         for i in self.panel_handlers.values():
