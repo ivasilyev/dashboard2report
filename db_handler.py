@@ -2,16 +2,16 @@
 
 import os
 import logging
+from secret import secret_dict
 from utils import datetime_now, dump_tsv, join_str_lines
-from secret_loader import SecretLoader
 
 
-class DBHandler(SecretLoader):
-    def __init__(self, secret_file):
-        super().__init__(secret_file)
+class DBHandler:
+    def __init__(self):
         self.client = None
         self.export_prefix = ""
         self.uri = ""
+        self._secret_dict = secret_dict
 
     def __del__(self):
         del self.client

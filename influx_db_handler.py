@@ -6,8 +6,8 @@ from influxdb import InfluxDBClient as Client
 
 
 class InfluxDBHandler(DBHandler):
-    def __init__(self, secret_file):
-        super().__init__(secret_file)
+    def __init__(self):
+        super().__init__()
         self.uri = self._secret_dict["influx_server_url"]
         parsed = urlparse(self.uri)
         self.client = Client(

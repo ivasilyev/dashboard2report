@@ -3,6 +3,7 @@ import os
 import logging
 import posixpath
 from collections import defaultdict
+from secret import secret_dict
 from utils import get_file, is_dict_valid, load_dict
 from grafana_panel_handler import GrafanaPanelHandler
 
@@ -95,16 +96,14 @@ class GrafanaDashboardHandler:
 
     @staticmethod
     def download_json(
-        host_string: str,
         dashboard_id: str,
-        gf_token: str,
         output_file: str
     ):
-        url = posixpath.join(host_string, "api/dashboards/uid", dashboard_id)
+        url = posixpath.join(secret_dict["gf_server_url"], "api/dashboards/uid", dashboard_id)
         get_file(
             url=url,
             file=output_file,
-            headers={"Authorization": "Bearer {}".format(gf_token)}
+            headers={"Authorization": "Bearer {}".format(secret_dict["gf_token"])}
         )
 
     def download(self, output_dir: str = os.getcwd()):

@@ -5,8 +5,8 @@ from db_handler import DBHandler
 
 
 class SqlDBHandler(DBHandler):
-    def __init__(self, secret_file):
-        super().__init__(secret_file)
+    def __init__(self):
+        super().__init__()
         self.engine = sqlalchemy.create_engine(self._secret_dict["sql_db_uri"])
         self.client = self.engine.connect().execution_options(autocommit=True)
         self.export_prefix = "sql"

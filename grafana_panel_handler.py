@@ -3,9 +3,10 @@ import os
 import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
+from secret import secret_dict
+from constants import TIMEZONE
 from image_handler import ImageHandler
-from constants import TIMEZONE, SECRET_JSON_PATH
-from utils import is_dict_valid, load_dict, get_file, datetime_now
+from utils import is_dict_valid, get_file, datetime_now
 
 
 class GrafanaPanelHandler(ImageHandler):
@@ -34,9 +35,6 @@ class GrafanaPanelHandler(ImageHandler):
         self.query_params = query_params
         if is_dict_valid(self.query_params):
             self.query_params = dict()
-        self._secret_dict = dict()
-        self.update_secret()
-
         logging.debug(f"Created {self}")
 
     def __str__(self):
@@ -45,15 +43,8 @@ class GrafanaPanelHandler(ImageHandler):
             f"from {self.time_from} to {self.time_to}"
         )
 
-    def update_secret(self, file: str = SECRET_JSON_PATH):
-        try:
-            self._secret_dict.update(load_dict(file))
-        except Exception:
-            logging.critical(f"The secret file is invalid : '{file}'")
-            raise
-
     def compose_url(self):
-        prefix = f"""{self._secret_dict["gf_server_url"]}/render/d-solo/{self.dashboard_id}/{self.dashboard_alias}"""
+        prefix = f"""{secret_dict["gf_server_url"]}/render/d-solo/{self.dashboard_id}/{self.dashboard_alias}"""
         parameter_dict = {
             "orgId": 1,
             "from": self.time_from,
@@ -80,6 +71,6 @@ class GrafanaPanelHandler(ImageHandler):
         get_file(
             url=url,
             file=self.file,
-            headers={"Authorization": "Bearer {}".format(self._secret_dict["gf_token"])}
+            headers={"Authorization": "Bearer {}".format(secret_dict["gf_token"])}
         )
         logging.info(f"Downloaded Grafana panel '{self.title}' into '{self.file}'")

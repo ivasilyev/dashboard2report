@@ -2,9 +2,9 @@
 import logging
 import atlassian
 import pandas as pd
-from secret_loader import SecretLoader
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+from secret import secret_dict
 from exporter import Exporter
 from constants import DEFAULT_TABLE_OF_CONTENTS_CAPTION
 
@@ -23,7 +23,7 @@ def create_tag(tag: str, value: str = "", attrs: dict = None) -> Tag:
     ).find(f"{tag}")
 
 
-class ConfluenceExporter(Exporter, SecretLoader):
+class ConfluenceExporter(Exporter):
     def __init__(
         self,
         time_from: int,
@@ -33,7 +33,6 @@ class ConfluenceExporter(Exporter, SecretLoader):
         confluence_parent_page_name: str
     ):
         super().__init__(time_from=time_from, time_to=time_to)
-        super().__init__(secret_file=secret_file)
         self.document = BeautifulSoup()
         self.client = None
         self.is_connected = False
@@ -44,9 +43,9 @@ class ConfluenceExporter(Exporter, SecretLoader):
 
     def connect(self):
         self.client = atlassian.Confluence(
-            url=self._secret_dict["confluence_root_url"],
-            username=self._secret_dict["confluence_username"],
-            password=self._secret_dict["confluence_password"]
+            url=secret_dict["confluence_root_url"],
+            username=secret_dict["confluence_username"],
+            password=secret_dict["confluence_password"]
         )
         self.space_key = [
             i for i in self.client.get_all_spaces()["results"]
