@@ -4,36 +4,46 @@ import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from image_handler import ImageHandler
-from utils import load_dict, get_file, datetime_now
 from constants import TIMEZONE, SECRET_JSON_PATH
+from utils import is_dict_valid, load_dict, get_file, datetime_now
 
 
 class GrafanaPanelHandler(ImageHandler):
     def __init__(
-            self,
-            title: str,
-            time_from: int,
-            time_to: int,
-            file: str = "",
-            dashboard_id: str = "",
-            dashboard_alias: str = "",
-            server_name: str = "",
-            panel_id: str = "",
-            query_params=None,
-            description: str = ""
+        self,
+        title: str,
+        time_from: int,
+        time_to: int,
+        file: str = "",
+        dashboard_id: str = "",
+        dashboard_alias: str = "",
+        server_name: str = "",
+        panel_id: str = "",
+        query_params: dict = None,
+        description: str = "",
+        row_name: str = "",
     ):
         super().__init__(title, file, description)
         self.dashboard_id = dashboard_id
         self.dashboard_alias = dashboard_alias
+        self.row_name = row_name
         self.time_from = time_from
         self.time_to = time_to
         self.server_name = server_name
         self.panel_id = panel_id
         self.query_params = query_params
-        if not isinstance(self.query_params, dict):
+        if is_dict_valid(self.query_params):
             self.query_params = dict()
         self._secret_dict = dict()
         self.update_secret()
+
+        logging.debug(f"Created {self}")
+
+    def __str__(self):
+        return (
+            f"Panel Handler with ID {self.panel_id} and title {self.dashboard_alias} for the time range "
+            f"from {self.time_from} to {self.time_to}"
+        )
 
     def update_secret(self, file: str = SECRET_JSON_PATH):
         try:

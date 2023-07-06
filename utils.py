@@ -128,3 +128,11 @@ def format_df_numeric_values(df: pd.DataFrame, fmt: str = "{:.1f}"):
             continue
         df[column] = df[column].apply(fmt.format)
     return df
+
+
+def remove_empty_values(x: list):
+    return [i for i in x if len(i) > 0]
+
+
+def is_dict_valid(d: dict):
+    return isinstance(d, dict) and len(d.keys()) > 0
