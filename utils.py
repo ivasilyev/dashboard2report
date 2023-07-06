@@ -136,3 +136,7 @@ def remove_empty_values(x: list):
 
 def is_dict_valid(d: dict):
     return isinstance(d, dict) and len(d.keys()) > 0
+
+
+def filename_only(s: str):
+    return os.path.splitext(os.path.basename(s))[0]

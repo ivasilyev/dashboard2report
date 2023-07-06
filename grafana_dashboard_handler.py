@@ -74,7 +74,9 @@ class GrafanaDashboardHandler:
         for panel_row_spoiler in d["dashboard"]["panels"]:
             panel_row_spoiler_title = panel_row_spoiler["title"]
             if panel_row_spoiler["type"] != "row":  # To be optimized, yet every panel *must* be in a row
+                logging.debug("The panel '{panel_row_spoiler}' is not row, skip")
                 continue
+            logging.debug(f"Populate panels for the row '{panel_row_spoiler}'")
             for panel in panel_row_spoiler["panels"]:
                 panel_name = panel["title"]
                 handler.panel_handlers[panel_name] = GrafanaPanelHandler(
@@ -120,6 +122,7 @@ class GrafanaDashboardHandler:
         return GrafanaDashboardHandler.from_json(output_file, **kwargs)
 
     def download(self, output_dir: str = os.getcwd()):
+        logging.info(f"Download panels of {self}")
         for i in self.panel_handlers.values():
             logging.debug(f"Download dashboard with alias '{self.dashboard_alias}' into '{output_dir}'")
             i.download(output_dir)

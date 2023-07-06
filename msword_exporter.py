@@ -11,8 +11,8 @@ from image_handler import ImageHandler
 
 
 class MSWordExporter(Exporter):
-    def __init__(self, time_from: int, time_to: int, title: str = "Document Title"):
-        super().__init__(time_from, time_to, title)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.document = Document()
 
     @property
@@ -74,10 +74,10 @@ class MSWordExporter(Exporter):
         self.document.save(output_file)
         logging.info(f"Saved document: '{output_file}'")
 
-    def run(self, output_dir: str = ""):
+    def run(self, output_dir: str, render_kwargs: dict):
         if len(output_dir) == 0:
             output_dir = tempfile.TemporaryDirectory().name
         logging.debug("Started document creation")
-        self.render(output_dir)
+        self.render(output_dir, **render_kwargs)
         logging.debug("Finished document creation")
         self.save(output_dir)
