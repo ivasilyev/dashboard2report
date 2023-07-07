@@ -2,8 +2,10 @@
 import os
 import logging
 import posixpath
+from copy import deepcopy
 from collections import defaultdict
 from secret import secret_dict
+from config import config_dict
 from grafana_panel_handler import GrafanaPanelHandler
 from utils import get_file, is_dict_valid, load_dict, datetime_now
 
@@ -63,7 +65,7 @@ class GrafanaDashboardHandler:
     ):
         dashboard_id = d["dashboard"]["uid"]
         dashboard_alias = d["dashboard"]["title"]
-        handler = GrafanaDashboardHandler(
+        dashboar_handler = GrafanaDashboardHandler(
             dashboard_id=dashboard_id,
             dashboard_alias=dashboard_alias,
             time_from=time_from,
@@ -73,24 +75,50 @@ class GrafanaDashboardHandler:
 
         for panel_row_spoiler in d["dashboard"]["panels"]:
             panel_row_spoiler_title = panel_row_spoiler["title"]
-            if panel_row_spoiler["type"] != "row":  # To be optimized, yet every panel *must* be in a row
+            # To be optimized, yet every panel _must_ be in a row
+            if panel_row_spoiler["type"] != "row":
                 logging.debug("The panel '{panel_row_spoiler}' is not row, skip")
                 continue
             logging.debug(f"Populate panels for the row '{panel_row_spoiler}'")
             for panel in panel_row_spoiler["panels"]:
                 panel_name = panel["title"]
-                handler.panel_handlers[panel_name] = GrafanaPanelHandler(
-                    title=panel_name,
-                    panel_id=panel["id"],
-                    dashboard_id=dashboard_id,
-                    dashboard_alias=dashboard_alias,
-                    time_from=time_from,
-                    time_to=time_to,
-                    query_params=query_params,
-                    row_name=panel_row_spoiler_title
-                )
+                if "vars" in config_dict.keys() and is_dict_valid(config_dict["vars"]):
+                    for var_key, var_values in config_dict["vars"].items():
+                        var_mask = f"${var_key}"
+                        if var_mask not in panel_name:
+                            panel_handler = GrafanaPanelHandler(
+                                title=panel_name,
+                                panel_id=panel["id"],
+                                dashboard_id=dashboard_id,
+                                dashboard_alias=dashboard_alias,
+                                time_from=time_from,
+                                time_to=time_to,
+                                query_params=query_params,
+                                row_name=panel_row_spoiler_title
+                            )
+                            dashboar_handler.panel_handlers[panel_name] = panel_handler
+                            logging.debug(f"Added panel handler: {panel_handler}")
+                        else:
+                            for var_value in var_values:
+                                nested_panel_name = panel_name.replace(var_mask, var_value)
+                                nested_query_params = deepcopy(query_params)
+                                if not is_dict_valid(nested_query_params):
+                                    nested_query_params = dict()
+                                nested_query_params.update({f"var-{var_key}": var_value})
+                                panel_handler = GrafanaPanelHandler(
+                                    title=nested_panel_name,
+                                    panel_id=panel["id"],
+                                    dashboard_id=dashboard_id,
+                                    dashboard_alias=dashboard_alias,
+                                    time_from=time_from,
+                                    time_to=time_to,
+                                    query_params=nested_query_params,
+                                    row_name=panel_row_spoiler_title
+                                )
+                                dashboar_handler.panel_handlers[nested_panel_name] = panel_handler
+                                logging.debug(f"Added panel handler: {panel_handler}")
         logging.debug(f"Loaded dashboard JSON with UID '{dashboard_id}'")
-        return handler
+        return dashboar_handler
 
     @staticmethod
     def from_json(file: str, **kwargs):
