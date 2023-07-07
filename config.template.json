@@ -1,6 +1,4 @@
 {
-    "timezone": "Europe/Moscow",
-    "table_of_contents_caption": "Table of Contents",
     "vars": {
         "host": [
             "example.1.com",
