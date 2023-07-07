@@ -1,6 +1,7 @@
 import os
 
 _SECRET_JSON_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "secret.json")
+_CONFIG_JSON_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.json")
 _TIMEZONE = "Europe/Moscow"
 _TABLE_OF_CONTENTS_CAPTION = "Table of Contents"
 
