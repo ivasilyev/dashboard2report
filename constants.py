@@ -1,14 +1,14 @@
 import os
 
+_SECRET_JSON_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "secret.json")
+_TIMEZONE = "Europe/Moscow"
+_TABLE_OF_CONTENTS_CAPTION = "Table of Contents"
+
 LOGGING_TEMPLATE = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-TIMEZONE = "Europe/Moscow"
 INFLUXDB_INDEX_COLUMN = "time"
 INFLUXDB_DATETIME = "%Y-%m-%d %H:%M:%S"
 STRAIGHT_DATETIME = "%d.%m.%Y %H:%M:%S"
 REVERSED_DATETIME = "%Y-%m-%d-%H-%M-%S-%f"
-SECRET_JSON_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "secret.json")
-
-DEFAULT_TABLE_OF_CONTENTS_CAPTION = "Содержание"
 
 CONFLUENCE_ATTACHMENT_SIZE_LIMIT = 30 << 20  # 30 MB
 

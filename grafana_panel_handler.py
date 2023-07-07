@@ -4,7 +4,7 @@ import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from secret import secret_dict
-from constants import TIMEZONE
+from constants import _TIMEZONE
 from image_handler import ImageHandler
 from utils import is_dict_valid, get_file, datetime_now
 
@@ -54,7 +54,7 @@ class GrafanaPanelHandler(ImageHandler):
             "panelId": self.panel_id,
             "width": 1000,
             "height": 500,
-            "tz": TIMEZONE,
+            "tz": _TIMEZONE,
         }
 
         url_parts = list(urlparse.urlparse(prefix))

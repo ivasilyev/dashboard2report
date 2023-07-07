@@ -3,7 +3,8 @@ import os
 import logging
 import pandas as pd
 from datetime import datetime
-from constants import TIMEZONE, REVERSED_DATETIME, STRAIGHT_DATETIME
+from env import TIMEZONE
+from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
 
 
 def get_file(
