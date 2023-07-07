@@ -1,8 +1,9 @@
 
 import pandas as pd
+from env import TIMEZONE
 from utils import parse_epoch
-from grafana_dashboard_handler import GrafanaDashboardHandler
 from msword_exporter import MSWordExporter
+from grafana_dashboard_handler import GrafanaDashboardHandler
 
 
 class ExampleWordExporter(MSWordExporter):
@@ -17,7 +18,7 @@ class ExampleWordExporter(MSWordExporter):
                 {"Name": "Start time", "Date and time": parse_epoch(self.time_from)},
                 {"Name": "End time", "Date and time": parse_epoch(self.time_to)}
             ]),
-            title="Test date and time",
+            title=f"Test date and time ({TIMEZONE})",
         )
 
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
