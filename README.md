@@ -1,5 +1,14 @@
 # `dashboard2report`
-Repo for automated creation of reports based on such sources as Grafana
+
+Repo containing basic code modules for automated creation of integrated reports.
+
+Supported import sources:
+* Grafana
+* InfluxDB
+* PostgreSQL
+
+Supported export formats:
+* Microsoft Word
 
 ## Preparation
 
