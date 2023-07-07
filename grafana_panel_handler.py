@@ -4,9 +4,9 @@ import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from secret import secret_dict
-from constants import _TIMEZONE
 from image_handler import ImageHandler
 from utils import is_dict_valid, get_file, datetime_now
+from env import GF_PANEL_HEIGHT, GF_PANEL_WIDTH, TIMEZONE
 
 
 class GrafanaPanelHandler(ImageHandler):
@@ -52,9 +52,9 @@ class GrafanaPanelHandler(ImageHandler):
             "var-Interval": "10s",
             "theme": "light",
             "panelId": self.panel_id,
-            "width": 1000,
-            "height": 500,
-            "tz": _TIMEZONE,
+            "width": GF_PANEL_WIDTH,
+            "height": GF_PANEL_HEIGHT,
+            "tz": TIMEZONE,
         }
 
         url_parts = list(urlparse.urlparse(prefix))
