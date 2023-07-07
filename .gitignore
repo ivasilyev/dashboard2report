@@ -132,3 +132,4 @@ dmypy.json
 demo*
 production*
 secret.json
+config.json
