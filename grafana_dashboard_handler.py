@@ -149,7 +149,7 @@ class GrafanaDashboardHandler:
         GrafanaDashboardHandler.download_json(dashboard_id, output_file)
         return GrafanaDashboardHandler.from_json(output_file, **kwargs)
 
-    def download(self, output_dir: str = os.getcwd()):
+    def download(self, output_dir: str):
         logging.info(f"Download panels of {self}")
         for i in self.panel_handlers.values():
             logging.debug(f"Download dashboard with alias '{self.dashboard_alias}' into '{output_dir}'")

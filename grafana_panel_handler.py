@@ -64,7 +64,7 @@ class GrafanaPanelHandler(ImageHandler):
         url_parts[4] = urlencode(query)
         return urlparse.urlunparse(url_parts)
 
-    def download(self, output_dir: str = os.getcwd()):
+    def download(self, output_dir: str):
         if len(self.file) == 0:
             self.file = os.path.join(output_dir, f"panel-{self.dashboard_alias}-{self.panel_id}-{datetime_now()}.png")
         url = self.compose_url()

@@ -22,11 +22,10 @@ class ExampleWordExporter(MSWordExporter):
 
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
             dashboard_id=dashboard_id,
-            output_dir=output_dir,
             time_from=self.time_from,
             time_to=self.time_to,
         )
-        grafana_dashboard_handler.download()
+        grafana_dashboard_handler.download(output_dir)
         dashboard_rows = grafana_dashboard_handler.rows
 
         for row_name, handlers in dashboard_rows.items():

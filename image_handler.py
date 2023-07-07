@@ -10,5 +10,5 @@ class ImageHandler:
         self.file = file
         self.description = description
 
-    def download(self):
+    def download(self, *args, **kwargs):
         pass
