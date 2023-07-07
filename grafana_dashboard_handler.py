@@ -140,11 +140,7 @@ class GrafanaDashboardHandler:
         )
 
     @staticmethod
-    def from_remote(
-        dashboard_id: str,
-        output_dir: str = os.getcwd(),
-        **kwargs
-    ):
+    def from_remote(dashboard_id: str, output_dir, **kwargs):
         output_file = os.path.join(output_dir, f"dashboard-{dashboard_id}-{datetime_now()}.json")
         GrafanaDashboardHandler.download_json(dashboard_id, output_file)
         return GrafanaDashboardHandler.from_json(output_file, **kwargs)

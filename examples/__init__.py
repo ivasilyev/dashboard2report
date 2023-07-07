@@ -24,6 +24,7 @@ class ExampleWordExporter(MSWordExporter):
             dashboard_id=dashboard_id,
             time_from=self.time_from,
             time_to=self.time_to,
+            output_dir=output_dir
         )
         grafana_dashboard_handler.download(output_dir)
         dashboard_rows = grafana_dashboard_handler.rows
