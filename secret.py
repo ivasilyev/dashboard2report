@@ -4,7 +4,7 @@ from utils import load_dict
 from env import SECRET_JSON_PATH
 
 try:
-    logging.debug(f"Using secret file: '{SECRET_JSON_PATH}'")
+    logging.debug(f"Use the secret file: '{SECRET_JSON_PATH}'")
     secret_dict = load_dict(SECRET_JSON_PATH)
 except Exception:
     logging.critical(f"The secret file is invalid: '{SECRET_JSON_PATH}'")
