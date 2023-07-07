@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from env import get_logging_level
 from constants import LOGGING_TEMPLATE
 from examples import ExampleWordExporter
 
@@ -38,10 +39,11 @@ if __name__ == '__main__':
         input_dir
     ) = parse_args()
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format=LOGGING_TEMPLATE
-    )
+    logger = logging.getLogger()
+    logger.setLevel(get_logging_level())
+    stream = logging.StreamHandler()
+    stream.setFormatter(logging.Formatter(LOGGING_TEMPLATE))
+    logger.addHandler(stream)
 
     exporter = ExampleWordExporter(
         time_from=input_time_from,
