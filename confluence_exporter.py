@@ -3,6 +3,7 @@ import os
 import logging
 import atlassian
 import pandas as pd
+from time import sleep
 from urllib import parse
 from ssl import SSLCertVerificationError
 from requests.exceptions import SSLError
@@ -12,7 +13,7 @@ from bs4.element import Tag
 from secret import secret_dict
 from exporter import Exporter
 from env import TABLE_OF_CONTENTS_CAPTION
-from constants import CONFLUENCE_TEMPLATE_SPOILED_IMAGE
+from constants import CONFLUENCE_DELAY_SECONDS, CONFLUENCE_PUSH_ATTEMPTS, CONFLUENCE_TEMPLATE_SPOILED_IMAGE
 
 
 def create_tag(tag: str, value: str = "", attrs: dict = None) -> Tag:
@@ -141,11 +142,31 @@ class ConfluenceExporter(Exporter):
         )
 
     def save(self):
-        logging.debug(f"Upload page {self.title} with {len(self.attachments.keys())} attachments")
         page_body = "".join(str(i) for i in self.document)
-        self.push_html(self.title, page_body)
+        for attempt in range(CONFLUENCE_PUSH_ATTEMPTS):
+            try:
+                logging.debug("Upload page '{}' with {} attachments for attempt {}".format(
+                    self.title,
+                    len(self.attachments.keys()),
+                    attempt + 1,
+                    CONFLUENCE_PUSH_ATTEMPTS)
+                )
+                self.push_html(self.title, page_body)
+                break
+            except:
+                sleep(CONFLUENCE_DELAY_SECONDS)
         for attachment_name, handler in self.attachments.items():
-            self.push_blob(handler, self.title)
+            for attempt in range(CONFLUENCE_PUSH_ATTEMPTS):
+                try:
+                    logging.debug("Upload attachment '{}' for attempt {} of {}".format(
+                        handler.title,
+                        attempt + 1,
+                        CONFLUENCE_PUSH_ATTEMPTS)
+                    )
+                    self.push_blob(handler, self.title)
+                    break
+                except:
+                    sleep(CONFLUENCE_DELAY_SECONDS)
 
     def run(self, output_dir: str, render_kwargs: dict):
         self.connect()

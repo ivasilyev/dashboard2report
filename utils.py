@@ -9,7 +9,6 @@ from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
 
 
 def load_bytes(file: str):
-    # chunk_size = 4 << 10
     logging.debug(f"Reading '{file}'")
     with open(file, "rb") as f:
         b = f.read()

@@ -18,6 +18,8 @@ STRAIGHT_DATETIME = "%d.%m.%Y %H:%M:%S"
 REVERSED_DATETIME = "%Y-%m-%d-%H-%M-%S-%f"
 
 CONFLUENCE_ATTACHMENT_SIZE_LIMIT = 30 << 20  # 30 MB
+CONFLUENCE_PUSH_ATTEMPTS = 5
+CONFLUENCE_DELAY_SECONDS = 5
 
 # https://confluence.atlassian.com/conf710/confluence-storage-format-1031840114.html#ConfluenceStorageFormat-Links
 # <ac:link>...</ac:link>
