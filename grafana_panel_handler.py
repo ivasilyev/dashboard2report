@@ -5,7 +5,7 @@ import urllib.parse as urlparse
 from urllib.parse import urlencode
 from secret import secret_dict
 from file_handler import FileHandler
-from utils import is_dict_valid, get_file, datetime_now
+from utils import is_dict_valid, get_file
 from env import GF_PANEL_HEIGHT, GF_PANEL_WIDTH, TIMEZONE
 
 
@@ -66,7 +66,7 @@ class GrafanaPanelHandler(FileHandler):
 
     def download(self, output_dir: str):
         if len(self.file) == 0:
-            self.file = os.path.join(output_dir, f"panel-{self.dashboard_alias}-{self.panel_id}-{datetime_now()}.png")
+            self.file = os.path.join(output_dir, f"panel-{self.dashboard_alias}-{self.panel_id}.png")
         url = self.compose_url()
         get_file(
             url=url,
