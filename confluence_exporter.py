@@ -90,8 +90,8 @@ class ConfluenceExporter(Exporter):
             basename=handler.basename,
         )
         self.attachments[handler.title] = handler
-        self._add("ac:structured-macro", body, {"ac:name": "ui_expand"})
-        self.add_paragraph(f"Рисунок {self._image_counter} – {handler.title}")
+        self._add("ac:structured-macro", body, {"ac:name": "expand"})
+        self.add_paragraph(f"<b>Рисунок {self._image_counter}</b> – {handler.title}")
         self._image_counter += 1
         self.add_paragraph()
 
