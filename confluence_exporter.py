@@ -27,12 +27,8 @@ def create_tag(tag: str, value: str = "", attrs: dict = None) -> Tag:
 
 
 class ConfluenceExporter(Exporter):
-    def __init__(
-        self,
-        time_from: int,
-        time_to: int
-    ):
-        super().__init__(time_from=time_from, time_to=time_to)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.document = BeautifulSoup()
         self.client = None
         self.is_connected = False
@@ -136,17 +132,17 @@ class ConfluenceExporter(Exporter):
             space=self.space_key
         )
 
-    def save(self, page_title: str):
-        logging.debug(f"Upload page {page_title} with {len(self.attachments.keys())} attachments")
+    def save(self):
+        logging.debug(f"Upload page {self.title} with {len(self.attachments.keys())} attachments")
         page_body = "".join(str(i) for i in self.document)
-        self.push_html(page_title, page_body)
+        self.push_html(self.title, page_body)
         for attachment_name, handler in self.attachments.items():
-            self.push_blob(handler, page_title)
+            self.push_blob(handler, self.title)
 
-    def run(self, output_dir: str, page_title: str, render_kwargs: dict):
+    def run(self, output_dir: str, render_kwargs: dict):
         self.connect()
         logging.debug("Started document creation")
         self.render(output_dir, **render_kwargs)
         logging.debug("Finished document creation")
-        self.save(page_title)
+        self.save()
         logging.debug("Finished document upload")
