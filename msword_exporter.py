@@ -5,7 +5,6 @@ from docx import Document
 from docx.shared import Mm
 from pandas import DataFrame
 from exporter import Exporter
-from utils import datetime_now
 from file_handler import FileHandler
 
 
@@ -69,7 +68,7 @@ class MSWordExporter(Exporter):
         self.add_paragraph()
 
     def save(self, output_dir: str):
-        output_file = os.path.join(output_dir, f"build-{datetime_now()}.docx")
+        output_file = os.path.join(output_dir, f"{self.title}.docx")
         self.document.save(output_file)
         logging.info(f"Saved document: '{output_file}'")
 

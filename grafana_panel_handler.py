@@ -56,7 +56,6 @@ class GrafanaPanelHandler(FileHandler):
             "height": GF_PANEL_HEIGHT,
             "tz": TIMEZONE,
         }
-
         url_parts = list(urlparse.urlparse(prefix))
         query = dict(urlparse.parse_qsl(url_parts[4]))
         query.update(parameter_dict)
