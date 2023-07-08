@@ -3,6 +3,7 @@ import os
 import logging
 import atlassian
 import pandas as pd
+from urllib import parse
 from ssl import SSLCertVerificationError
 from file_handler import FileHandler
 from bs4 import BeautifulSoup
@@ -28,40 +29,37 @@ def create_tag(tag: str, value: str = "", attrs: dict = None) -> Tag:
 
 
 class ConfluenceExporter(Exporter):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent_url: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.document = BeautifulSoup()
         self.client = None
         self.is_connected = False
-        self.space_key = ""
+        self.root_url = ""
         self.parent_page_id = ""
+        self.space_key = ""
         self.attachments = dict()
         self.confluence_space_name = secret_dict["confluence_space_name"]
         self.confluence_parent_page_name = secret_dict["confluence_parent_page_name"]
+        self._parse_url(parent_url)
+
+    def _parse_url(self, url: str):
+        result = parse.urlparse(parse.unquote(url))
+        self.root_url = parse.urlunsplit([result.scheme, result.netloc] + ["", ] * 3)
+        self.parent_page_id = parse.parse_qs(result.query)["pageId"][0]
 
     def connect(self):
-        try:
-            self.client = atlassian.Confluence(
-                url=secret_dict["confluence_root_url"],
-                username=secret_dict["confluence_username"],
-                password=secret_dict["confluence_password"]
-            )
-        except SSLCertVerificationError:
-            self.client = atlassian.Confluence(
-                url=secret_dict["confluence_root_url"],
-                username=secret_dict["confluence_username"],
-                password=secret_dict["confluence_password"],
-                verify_ssl=False
-            )
-        self.space_key = [
-            i for i in self.client.get_all_spaces()["results"]
-            if i["name"] == self.confluence_space_name
-        ][0]["key"]
-        self.parent_page_id = self.client.get_page_id(
-            self.space_key,
-            self.confluence_parent_page_name
+        kwargs = dict(
+            url=self.root_url,
+            username=secret_dict["confluence_username"],
+            password=secret_dict["confluence_password"]
         )
+        try:
+            self.client = atlassian.Confluence(**kwargs)
+        except SSLCertVerificationError:
+            kwargs["verify_ssl"] = False
+            self.client = atlassian.Confluence(**kwargs)
         self.is_connected = True
+        self.space_key = self.client.get_page_space(self.parent_page_id)
         logging.debug("Confluence client connected")
 
     def _add(self, *args, **kwargs):

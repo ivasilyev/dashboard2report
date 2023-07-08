@@ -23,7 +23,9 @@ def parse_args():
                         help="Timestamp of test end")
     parser.add_argument("-o", "--output", metavar="<directory>", default="",
                         help="Output directory")
-    parser.add_argument("-p", "--page_name", metavar="<str>", default="",
+    parser.add_argument("-p", "--parent", metavar="<url>", default="",
+                        help="Confluence parent page full URL")
+    parser.add_argument("-t", "--target_name", metavar="<str>", default="",
                         help="Confluence target page name")
     _namespace = parser.parse_args()
     output_dir = validate_directory(_namespace.output)
@@ -32,7 +34,8 @@ def parse_args():
         _namespace.start,
         _namespace.end,
         output_dir,
-        _namespace.page_name,
+        _namespace.parent,
+        _namespace.target_name,
     )
 
 
@@ -42,7 +45,8 @@ if __name__ == '__main__':
         input_time_from,
         input_time_to,
         input_dir,
-        confluence_page_name,
+        confluence_parent_page_url,
+        confluence_target_page_name,
     ) = parse_args()
 
     logger = logging.getLogger()
@@ -58,12 +62,13 @@ if __name__ == '__main__':
     )
     word_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
 
-    if len(confluence_page_name) == 0:
-        confluence_page_name = "Результаты теста"
+    if len(confluence_target_page_name) == 0:
+        confluence_target_page_name = "Результаты теста"
 
     confluence_exporter = ExampleConfluenceExporter(
+        parent_url=confluence_parent_page_url,
+        title=confluence_target_page_name,
         time_from=input_time_from,
         time_to=input_time_to,
-        title=confluence_page_name
     )
     confluence_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
