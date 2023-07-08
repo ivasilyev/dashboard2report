@@ -56,11 +56,13 @@ class MSWordExporter(Exporter):
         if not os.path.isfile(handler.file):
             logging.critical("The image file does not exist")
             return
-        logging.debug(f"Add image '{handler.title}'")
+        logging.debug(f"Add image '{handler.file}'")
         if len(description) > 0:
             self.add_paragraph(description.format(self._image_counter), style="Normal")
         self.add_paragraph()
-        self.document.add_picture(handler.file, width=self._text_width)
+        with open(handler.file, mode="rb") as f:
+            self.document.add_picture(f, width=self._text_width)
+            f.close()
         if len(title) == 0:
             title = f"Рисунок {self._image_counter} – {handler.title}"
         self.add_paragraph(title, style="Caption")
