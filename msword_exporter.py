@@ -1,12 +1,11 @@
 
 import os
 import logging
-import tempfile
 from docx import Document
 from docx.shared import Mm
 from pandas import DataFrame
-from utils import datetime_now
 from exporter import Exporter
+from utils import datetime_now
 from file_handler import FileHandler
 
 
@@ -75,8 +74,6 @@ class MSWordExporter(Exporter):
         logging.info(f"Saved document: '{output_file}'")
 
     def run(self, output_dir: str, render_kwargs: dict):
-        if len(output_dir) == 0:
-            output_dir = tempfile.TemporaryDirectory().name
         logging.debug("Started document creation")
         self.render(output_dir, **render_kwargs)
         logging.debug("Finished document creation")
