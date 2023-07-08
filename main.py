@@ -3,8 +3,9 @@
 
 import logging
 from env import get_logging_level
+from utils import validate_directory
 from constants import LOGGING_TEMPLATE
-from examples import ExampleWordExporter
+from examples import ExampleWordExporter, ExampleConfluenceExporter
 
 
 def parse_args():
@@ -22,12 +23,16 @@ def parse_args():
                         help="Timestamp of test end")
     parser.add_argument("-o", "--output", metavar="<directory>", default="",
                         help="Output directory")
+    parser.add_argument("-p", "--page_name", metavar="<str>", default="",
+                        help="Confluence target page name")
     _namespace = parser.parse_args()
+    output_dir = validate_directory(_namespace.output)
     return (
         _namespace.dashboard,
         _namespace.start,
         _namespace.end,
-        _namespace.output,
+        output_dir,
+        _namespace.page_name,
     )
 
 
@@ -36,7 +41,8 @@ if __name__ == '__main__':
         input_dashboard_id,
         input_time_from,
         input_time_to,
-        input_dir
+        input_dir,
+        confluence_page_name,
     ) = parse_args()
 
     logger = logging.getLogger()
@@ -45,9 +51,20 @@ if __name__ == '__main__':
     stream.setFormatter(logging.Formatter(LOGGING_TEMPLATE))
     logger.addHandler(stream)
 
-    exporter = ExampleWordExporter(
+    word_exporter = ExampleWordExporter(
         time_from=input_time_from,
         time_to=input_time_to,
         title="Результаты теста"
     )
-    exporter.run(input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
+    word_exporter.run(input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
+
+    confluence_exporter = ExampleConfluenceExporter(
+        time_from=input_time_from,
+        time_to=input_time_to,
+        title="Результаты теста"
+    )
+    confluence_exporter.run(
+        output_dir=input_dir,
+        page_title=confluence_page_name,
+        render_kwargs=dict(dashboard_id=input_dashboard_id)
+    )
