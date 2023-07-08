@@ -30,9 +30,7 @@ class ConfluenceExporter(Exporter):
     def __init__(
         self,
         time_from: int,
-        time_to: int,
-        confluence_space_name: str,
-        confluence_parent_page_name: str
+        time_to: int
     ):
         super().__init__(time_from=time_from, time_to=time_to)
         self.document = BeautifulSoup()
@@ -41,8 +39,8 @@ class ConfluenceExporter(Exporter):
         self.space_key = ""
         self.parent_page_id = ""
         self.attachments = dict()
-        self.confluence_space_name = confluence_space_name
-        self.confluence_parent_page_name = confluence_parent_page_name
+        self.confluence_space_name = secret_dict["confluence_space_name"]
+        self.confluence_parent_page_name = secret_dict["confluence_parent_page_name"]
 
     def connect(self):
         self.client = atlassian.Confluence(
@@ -67,14 +65,17 @@ class ConfluenceExporter(Exporter):
     def add_table_of_contents(self, caption: str = TABLE_OF_CONTENTS_CAPTION):
         self._add("p", f"<b id=\"toc\">{caption}</b><ac:structured-macro ac:name=\"toc\" />")
 
-    def add_header(self, level: int, caption: str):
+    def add_header(self, caption: str, level: int):
         self._add(f"h{level}", str(caption))
 
-    def add_paragraph(self, text: str):
+    def add_paragraph(self, text: str = ""):
         self._add("p", str(text))
 
-    def add_df(self, df: pd.DataFrame):
+    def add_df(self, df: pd.DataFrame, title: str = "", description: str = ""):
+        self.add_paragraph(title)
         self._add("div", df.to_html(), {"class": "table"})
+        if len(description) > 0:
+            self.add_paragraph(description)
 
     def add_image(self, handler: FileHandler):
         if not os.path.isfile(handler.file):
@@ -87,6 +88,9 @@ class ConfluenceExporter(Exporter):
         )
         self.attachments[handler.title] = handler
         self._add("ac:structured-macro", body, {"ac:name": "rwui_expand"})
+        self.add_paragraph(f"Рисунок {self._image_counter} – {handler.title}")
+        self._image_counter += 1
+        self.add_paragraph()
 
     def push_html(self, page_title: str, page_body: str):
         if not self.is_connected:
@@ -132,8 +136,17 @@ class ConfluenceExporter(Exporter):
             space=self.space_key
         )
 
-    def push_page(self, page_title: str, page_body: str):
+    def save(self, page_title: str):
         logging.debug(f"Upload page {page_title} with {len(self.attachments.keys())} attachments")
+        page_body = "".join(str(i) for i in self.document)
         self.push_html(page_title, page_body)
         for attachment_name, handler in self.attachments.items():
             self.push_blob(handler, page_title)
+
+    def run(self, output_dir: str, page_title: str, render_kwargs: dict):
+        self.connect()
+        logging.debug("Started document creation")
+        self.render(output_dir, **render_kwargs)
+        logging.debug("Finished document creation")
+        self.save(page_title)
+        logging.debug("Finished document upload")
