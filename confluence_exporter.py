@@ -1,12 +1,15 @@
 
+import os
 import logging
 import atlassian
 import pandas as pd
+from file_handler import FileHandler
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from secret import secret_dict
 from exporter import Exporter
-from constants import DEFAULT_TABLE_OF_CONTENTS_CAPTION
+from env import TABLE_OF_CONTENTS_CAPTION
+from constants import CONFLUENCE_TEMPLATE_SPOILED_IMAGE
 
 
 def create_tag(tag: str, value: str = "", attrs: dict = None) -> Tag:
@@ -37,6 +40,7 @@ class ConfluenceExporter(Exporter):
         self.is_connected = False
         self.space_key = ""
         self.parent_page_id = ""
+        self.attachments = dict()
         self.confluence_space_name = confluence_space_name
         self.confluence_parent_page_name = confluence_parent_page_name
 
@@ -60,7 +64,7 @@ class ConfluenceExporter(Exporter):
     def _add(self, *args, **kwargs):
         self.document.append(create_tag(*args, **kwargs))
 
-    def add_table_of_contents(self, caption: str = DEFAULT_TABLE_OF_CONTENTS_CAPTION):
+    def add_table_of_contents(self, caption: str = TABLE_OF_CONTENTS_CAPTION):
         self._add("p", f"<b id=\"toc\">{caption}</b><ac:structured-macro ac:name=\"toc\" />")
 
     def add_header(self, level: int, caption: str):
@@ -72,8 +76,17 @@ class ConfluenceExporter(Exporter):
     def add_df(self, df: pd.DataFrame):
         self._add("div", df.to_html(), {"class": "table"})
 
-    def add_image(self, image: bytes, caption: str):
-        pass
+    def add_image(self, handler: FileHandler):
+        if not os.path.isfile(handler.file):
+            logging.critical("The image file does not exist")
+            return Tag()
+        logging.debug(f"Add image '{handler.title}'")
+        body = CONFLUENCE_TEMPLATE_SPOILED_IMAGE.format(
+            title=handler.title,
+            basename=handler.basename,
+        )
+        self.attachments[handler.title] = handler
+        self._add("ac:structured-macro", body, {"ac:name": "rwui_expand"})
 
     def push_html(self, page_title: str, page_body: str):
         if not self.is_connected:
@@ -108,19 +121,19 @@ class ConfluenceExporter(Exporter):
                 full_width=False
             )
 
-    def push_blob(self, file_content: bytes, file_basename: str, page_title: str):
-        logging.debug(f"Upload attachment '{file_basename}' into created page '{page_title}'")
+    def push_blob(self, handler: FileHandler, page_title: str):
+        logging.debug(f"Upload attachment '{handler.basename}' into created page '{page_title}'")
+        handler.load()
         o = self.client.attach_content(
-            content=bytes(file_content),
-            name=file_basename,
+            content=bytes(handler.content),
+            name=handler.basename,
             page_id=self.client.get_page_id(self.space_key, page_title),
             title=page_title,
             space=self.space_key
         )
 
-    def push_page(self, page_title: str, page_body: str, page_attachments: list):
-        logging.debug(f"Upload page {page_title} with {len(page_attachments)} attachments")
+    def push_page(self, page_title: str, page_body: str):
+        logging.debug(f"Upload page {page_title} with {len(self.attachments.keys())} attachments")
         self.push_html(page_title, page_body)
-        for attachment_dict in page_attachments:
-            self.push_blob(page_title=page_title, **attachment_dict)
-
+        for attachment_name, handler in self.attachments.items():
+            self.push_blob(handler, page_title)

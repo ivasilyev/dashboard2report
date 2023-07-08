@@ -36,6 +36,14 @@ def get_file(
     return file
 
 
+def load_bytes(file: str):
+    logging.debug(f"Reading '{file}'")
+    with open(file, "wb") as f:
+        b = f.read()
+        f.close()
+    return b
+
+
 def load_string(file: str):
     logging.debug(f"Reading '{file}'")
     with open(file=file, mode="r", encoding="utf-8") as f:

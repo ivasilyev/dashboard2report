@@ -32,13 +32,13 @@ CONFLUENCE_TEMPLATE_HYPERLINK = """
 # https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html
 # <ac:structured-macro ac:name="expand">...</ac:structured-macro>
 CONFLUENCE_TEMPLATE_SPOILED_IMAGE = """
-<ac:parameter ac:name="title">{filename}</ac:parameter>
+<ac:parameter ac:name="title">{title}</ac:parameter>
 <ac:rich-text-body>
     <ac:image 
-        ac:alt="{filename}" 
+        ac:alt="{title}"
         ac:height="100%"
-        ac:thumbnail="false" 
-        ac:title="{filename}"
+        ac:thumbnail="false"
+        ac:title="{title}"
         ac:width="100%"
     >
         <ri:attachment ri:filename="{basename}" />

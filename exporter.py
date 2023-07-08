@@ -23,6 +23,9 @@ class Exporter:
     def add_df(self, *args, **kwargs):
         pass
 
+    def add_blob(self, *args, **kwargs):
+        pass
+
     def add_image(self, *args, **kwargs):
         pass
 

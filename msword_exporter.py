@@ -7,7 +7,7 @@ from docx.shared import Mm
 from pandas import DataFrame
 from utils import datetime_now
 from exporter import Exporter
-from image_handler import ImageHandler
+from file_handler import FileHandler
 
 
 class MSWordExporter(Exporter):
@@ -54,7 +54,7 @@ class MSWordExporter(Exporter):
                 self._assign_table_cells(cells, idx, i)
         self.add_paragraph()
 
-    def add_image(self, handler: ImageHandler, title: str = "", description: str = ""):
+    def add_image(self, handler: FileHandler, title: str = "", description: str = ""):
         if not os.path.isfile(handler.file):
             logging.critical("The image file does not exist")
             return

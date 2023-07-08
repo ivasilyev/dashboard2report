@@ -4,12 +4,12 @@ import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from secret import secret_dict
-from image_handler import ImageHandler
+from file_handler import FileHandler
 from utils import is_dict_valid, get_file, datetime_now
 from env import GF_PANEL_HEIGHT, GF_PANEL_WIDTH, TIMEZONE
 
 
-class GrafanaPanelHandler(ImageHandler):
+class GrafanaPanelHandler(FileHandler):
     def __init__(
         self,
         title: str,
