@@ -80,7 +80,7 @@ class ConfluenceExporter(Exporter):
         if len(description) > 0:
             self.add_paragraph(description)
 
-    def add_image(self, handler: FileHandler):
+    def add_image(self, handler: FileHandler, title: str = "", description: str = ""):
         if not os.path.isfile(handler.file):
             logging.critical("The image file does not exist")
             return Tag()
@@ -91,7 +91,6 @@ class ConfluenceExporter(Exporter):
         )
         self.attachments[handler.title] = handler
         self._add("ac:structured-macro", body, {"ac:name": "expand"})
-        self.add_paragraph(f"<b>Рисунок {self._image_counter}</b> – {handler.title}")
         self._image_counter += 1
         self.add_paragraph()
 
