@@ -76,7 +76,7 @@ class ConfluenceExporter(Exporter):
 
     def add_df(self, df: pd.DataFrame, title: str = "", description: str = ""):
         self.add_paragraph(title)
-        self._add("div", df.to_html(), {"class": "table"})
+        self._add("div", df.to_html(header=True, index=False), {"class": "table"})
         if len(description) > 0:
             self.add_paragraph(description)
 
