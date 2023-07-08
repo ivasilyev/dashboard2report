@@ -2,38 +2,10 @@
 import os
 import logging
 import pandas as pd
+from requests import get
 from datetime import datetime
 from env import TIMEZONE
 from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
-
-
-def get_file(
-        url: str,
-        file: str = "",
-        force: bool = False,
-        headers=None
-):
-    from requests import get
-    logging.debug(f"Download URL: '{url}'")
-    if os.path.isfile(file) and not force:
-        logging.debug(f"Skip already downloaded file: '{file}'")
-        return file
-    if headers is None:
-        headers = dict()
-    else:
-        logging.debug(f"Supplied headers: '{list(headers.keys())}'")
-    response = get(url, headers=headers, stream=True)
-    if response.status_code != 200:
-        logging.warning(f"Got response with status {response.status_code} for '{url}'")
-    if len(file) == 0:
-        file = os.path.basename(url)
-    os.makedirs(os.path.dirname(file), exist_ok=True)
-    with open(file, "wb") as f:
-        for data in response.iter_content():
-            f.write(data)
-        f.close()
-        logging.debug(f"Downloaded: '{file}'")
-    return file
 
 
 def load_bytes(file: str):
@@ -157,3 +129,31 @@ def validate_directory(s: str):
         return tD.name
     os.makedirs(s, exist_ok=True)
     return os.path.abspath(s)
+
+
+def get_file(
+        url: str,
+        file: str = "",
+        force: bool = False,
+        headers: dict = None
+):
+    logging.debug(f"Download URL: '{url}'")
+    if os.path.isfile(file) and not force:
+        logging.debug(f"Skip already downloaded file: '{file}'")
+        return file
+    if not is_dict_valid(headers):
+        headers = dict()
+    else:
+        logging.debug(f"Supplied headers: '{list(headers.keys())}'")
+    response = get(url, headers=headers, stream=True)
+    if response.status_code != 200:
+        logging.warning(f"Got response with status {response.status_code} for '{url}'")
+    if len(file) == 0:
+        file = os.path.basename(url)
+    os.makedirs(os.path.dirname(file), exist_ok=True)
+    with open(file, "wb") as f:
+        for data in response.iter_content():
+            f.write(data)
+        f.close()
+        logging.debug(f"Downloaded: '{file}'")
+    return file
