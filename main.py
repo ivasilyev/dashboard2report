@@ -65,10 +65,11 @@ if __name__ == '__main__':
     if len(confluence_target_page_name) == 0:
         confluence_target_page_name = "Результаты теста"
 
-    confluence_exporter = ExampleConfluenceExporter(
-        parent_url=confluence_parent_page_url,
-        title=confluence_target_page_name,
-        time_from=input_time_from,
-        time_to=input_time_to,
-    )
-    confluence_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
+    if len(confluence_parent_page_url) > 0 and len(confluence_target_page_name) > 0:
+        confluence_exporter = ExampleConfluenceExporter(
+            parent_url=confluence_parent_page_url,
+            title=confluence_target_page_name,
+            time_from=input_time_from,
+            time_to=input_time_to,
+        )
+        confluence_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
