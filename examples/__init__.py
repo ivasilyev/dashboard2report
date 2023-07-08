@@ -31,8 +31,10 @@ class ExampleWordExporter(MSWordExporter):
         grafana_dashboard_handler.download(output_dir)
         dashboard_rows = grafana_dashboard_handler.rows
 
+        self.add_header("Grafana", 2)
+        self.add_header(grafana_dashboard_handler.dashboard_alias, 3)
         for row_name, handlers in dashboard_rows.items():
-            self.add_header(row_name, 2)
+            self.add_header(row_name, 4)
             for handler in handlers:
                 self.add_image(handler=handler)
 
@@ -63,8 +65,10 @@ class ExampleConfluenceExporter(ConfluenceExporter):
         grafana_dashboard_handler.download(output_dir)
         dashboard_rows = grafana_dashboard_handler.rows
 
+        self.add_header("Grafana", 2)
+        self.add_header(grafana_dashboard_handler.dashboard_alias, 3)
         for row_name, handlers in dashboard_rows.items():
-            self.add_header(row_name, 2)
+            self.add_header(row_name, 4)
             for handler in handlers:
                 self.add_image(handler=handler)
 
