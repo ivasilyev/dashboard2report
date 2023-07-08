@@ -10,7 +10,7 @@ from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
 def get_file(
         url: str,
         file: str = "",
-        force: bool = True,
+        force: bool = False,
         headers=None
 ):
     from requests import get
