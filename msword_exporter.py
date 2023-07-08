@@ -60,9 +60,7 @@ class MSWordExporter(Exporter):
         if len(description) > 0:
             self.add_paragraph(description.format(self._image_counter), style="Normal")
         self.add_paragraph()
-        with open(handler.file, mode="rb") as f:
-            self.document.add_picture(f, width=self._text_width)
-            f.close()
+        self.document.add_picture(handler.file, width=self._text_width)
         if len(title) == 0:
             title = f"Рисунок {self._image_counter} – {handler.title}"
         self.add_paragraph(title, style="Caption")

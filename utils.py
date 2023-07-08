@@ -139,8 +139,8 @@ def get_file(
         headers: dict = None
 ):
     logging.debug(f"Download URL: '{url}'")
-    if os.path.isfile(file) and not force:
-        logging.debug(f"Skip already downloaded file: '{file}'")
+    if os.path.isfile(file) and os.stat(file).st_size > 0 and not force:
+        logging.debug(f"Skip download the already existing file: '{file}'")
         return file
     if not is_dict_valid(headers):
         headers = dict()
