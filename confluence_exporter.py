@@ -3,6 +3,7 @@ import os
 import logging
 import atlassian
 import pandas as pd
+from ssl import SSLCertVerificationError
 from file_handler import FileHandler
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -39,11 +40,19 @@ class ConfluenceExporter(Exporter):
         self.confluence_parent_page_name = secret_dict["confluence_parent_page_name"]
 
     def connect(self):
-        self.client = atlassian.Confluence(
-            url=secret_dict["confluence_root_url"],
-            username=secret_dict["confluence_username"],
-            password=secret_dict["confluence_password"]
-        )
+        try:
+            self.client = atlassian.Confluence(
+                url=secret_dict["confluence_root_url"],
+                username=secret_dict["confluence_username"],
+                password=secret_dict["confluence_password"]
+            )
+        except SSLCertVerificationError:
+            self.client = atlassian.Confluence(
+                url=secret_dict["confluence_root_url"],
+                username=secret_dict["confluence_username"],
+                password=secret_dict["confluence_password"],
+                verify_ssl=False
+            )
         self.space_key = [
             i for i in self.client.get_all_spaces()["results"]
             if i["name"] == self.confluence_space_name
