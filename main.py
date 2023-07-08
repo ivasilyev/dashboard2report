@@ -56,15 +56,14 @@ if __name__ == '__main__':
         time_to=input_time_to,
         title="Результаты теста"
     )
-    word_exporter.run(input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
+    word_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
+
+    if len(confluence_page_name) == 0:
+        confluence_page_name = "Результаты теста"
 
     confluence_exporter = ExampleConfluenceExporter(
         time_from=input_time_from,
         time_to=input_time_to,
-        title="Результаты теста"
+        title=confluence_page_name
     )
-    confluence_exporter.run(
-        output_dir=input_dir,
-        page_title=confluence_page_name,
-        render_kwargs=dict(dashboard_id=input_dashboard_id)
-    )
+    confluence_exporter.run(output_dir=input_dir, render_kwargs=dict(dashboard_id=input_dashboard_id))
