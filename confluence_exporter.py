@@ -5,6 +5,7 @@ import atlassian
 import pandas as pd
 from urllib import parse
 from ssl import SSLCertVerificationError
+from requests.exceptions import SSLError
 from file_handler import FileHandler
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -55,7 +56,7 @@ class ConfluenceExporter(Exporter):
         )
         try:
             self.client = atlassian.Confluence(**kwargs)
-        except SSLCertVerificationError:
+        except (SSLCertVerificationError, SSLError) as e:
             kwargs["verify_ssl"] = False
             self.client = atlassian.Confluence(**kwargs)
         self.is_connected = True
