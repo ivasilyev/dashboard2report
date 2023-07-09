@@ -9,6 +9,7 @@ from file_handler import FileHandler
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from secret import secret_dict
+from config import is_verify_ssl
 from exporter import Exporter
 from env import TABLE_OF_CONTENTS_CAPTION
 from constants import CONFLUENCE_DELAY_SECONDS, CONFLUENCE_PUSH_ATTEMPTS, CONFLUENCE_TEMPLATE_SPOILED_IMAGE
@@ -48,16 +49,12 @@ class ConfluenceExporter(Exporter):
         self.parent_page_id = parse.parse_qs(result.query)["pageId"][0]
 
     def connect(self):
-        kwargs = dict(
+        self.client = atlassian.Confluence(
             url=self.root_url,
             username=secret_dict["confluence_username"],
-            password=secret_dict["confluence_password"]
+            password=secret_dict["confluence_password"],
+            verify_ssl=is_verify_ssl
         )
-        try:
-            self.client = atlassian.Confluence(**kwargs)
-        except Exception as e:
-            kwargs["verify_ssl"] = False
-            self.client = atlassian.Confluence(**kwargs)
         self.is_connected = True
         self.space_key = self.client.get_page_space(self.parent_page_id)
         logging.debug("Confluence client connected")

@@ -1,8 +1,9 @@
 {
-    "vars": {
+    "variable": {
         "host": [
             "example.1.com",
             "example.2.com"
         ]
-    }
+    },
+    "verify_ssl": true
 }

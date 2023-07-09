@@ -29,6 +29,7 @@ chmod +x "production-your-project.py"
 export GF_PANEL_WIDTH=1920
 export GF_PANEL_HEIGHT=1080
 export TIMEZONE=Europe/Moscow
+export LOGGING_LEVEL=0
 
-python "production-your-project.py" -d $GF_DASHBOARD -s $START_TS -e $END_TS -o test
+python "production-your-project.py" -d $GF_DASHBOARD -s $START_TS -e $END_TS -p $PARENT_URI -t $TGT_URI -o test
 ```
