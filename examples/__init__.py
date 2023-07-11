@@ -12,7 +12,7 @@ class ExampleWordExporter(MSWordExporter):
         super().__init__(*args, **kwargs)
 
     def render(self, output_dir: str, dashboard_id: str):
-        self.add_header(self.title, 1)
+        # Confluence pages already have a header
 
         self.add_paragraph("Дата и время проведения теста: {} - {}".format(
             *[parse_epoch(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
@@ -27,10 +27,10 @@ class ExampleWordExporter(MSWordExporter):
         grafana_dashboard_handler.download(output_dir)
         dashboard_rows = grafana_dashboard_handler.rows
 
-        self.add_header("Grafana", 2)
-        self.add_header(grafana_dashboard_handler.dashboard_alias, 3)
+        self.add_header("Grafana", 1)
+        self.add_header(grafana_dashboard_handler.dashboard_alias, 2)
         for row_name, handlers in dashboard_rows.items():
-            self.add_header(row_name, 4)
+            self.add_header(row_name, 3)
             for handler in handlers:
                 self.add_image(handler=handler)
 
