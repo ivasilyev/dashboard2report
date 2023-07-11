@@ -14,12 +14,8 @@ class ExampleWordExporter(MSWordExporter):
     def render(self, output_dir: str, dashboard_id: str):
         self.add_header(self.title, 1)
 
-        self.add_df(
-            df=pd.DataFrame([
-                {"Name": "Start time", "Date and time": parse_epoch(self.time_from)},
-                {"Name": "End time", "Date and time": parse_epoch(self.time_to)}
-            ]),
-            title=f"Test date and time ({config.grafana_timezone})",
+        self.add_paragraph("Дата и время проведения теста: {} - {}".format(
+            *[parse_epoch(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
         )
 
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
@@ -48,7 +44,7 @@ class ExampleConfluenceExporter(ConfluenceExporter):
     def render(self, output_dir: str, dashboard_id: str):
         self.add_header(self.title, 1)
         self.add_paragraph("<b>Дата и время проведения теста:</b> {} - {}".format(
-            *[parse_epoch(i) for i in (self.time_from, self.time_to)])
+            *[parse_epoch(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
         )
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
             dashboard_id=dashboard_id,

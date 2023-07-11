@@ -4,8 +4,7 @@ import logging
 import pandas as pd
 from requests import get
 from datetime import datetime
-from config import grafana_timezone
-from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
+from constants import TIMEZONE, REVERSED_DATETIME, STRAIGHT_DATETIME
 
 
 def load_bytes(file: str):
@@ -33,10 +32,10 @@ def datetime_now(fmt: str = REVERSED_DATETIME):
     return datetime.now().strftime(fmt)
 
 
-def parse_epoch(timestamp: int, fmt: str = STRAIGHT_DATETIME):
+def parse_epoch(time_stamp: int, fmt: str = STRAIGHT_DATETIME, time_zone: str = TIMEZONE):
     from pytz import timezone
-    tz = timezone(grafana_timezone)
-    return tz.localize(datetime.fromtimestamp(timestamp / 1000)).strftime(fmt)
+    tz = timezone(time_zone)
+    return tz.localize(datetime.fromtimestamp(time_stamp / 1000)).strftime(fmt)
 
 
 def dump_tsv(df: pd.DataFrame, file: str):

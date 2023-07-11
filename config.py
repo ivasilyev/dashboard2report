@@ -1,5 +1,6 @@
 
 import logging
+import constants
 from env import CONFIG_JSON_PATH
 from utils import load_dict, is_dict_valid, is_bool_valid, is_int_valid, is_str_valid
 
@@ -20,7 +21,7 @@ if is_dict_valid(_get("variables")):
     variables = dict(_get("variables"))
 
 # See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-grafana_timezone = "UTC"
+grafana_timezone = constants.TIMEZONE
 if is_str_valid(_get("grafana_timezone")):
     grafana_timezone = str(_get("grafana_timezone"))
 
