@@ -33,12 +33,12 @@ def datetime_now(fmt: str = REVERSED_DATETIME):
     return datetime.now().strftime(fmt)
 
 
-def render_epoch(s: str, fmt: str = INFLUXDB_DATETIME, time_zone: str = TIMEZONE):
+def render_grafana_timestamp(s: str, fmt: str = INFLUXDB_DATETIME, time_zone: str = TIMEZONE):
     tz = timezone(time_zone)
-    tz.localize(datetime.strptime(s, fmt)).timestamp() * 1000
+    return tz.localize(datetime.strptime(s, fmt)).timestamp() * 1000
 
 
-def parse_epoch(time_stamp: int, fmt: str = STRAIGHT_DATETIME, time_zone: str = TIMEZONE):
+def parse_grafana_timestamp(time_stamp: int, fmt: str = STRAIGHT_DATETIME, time_zone: str = TIMEZONE):
     tz = timezone(time_zone)
     return tz.localize(datetime.fromtimestamp(time_stamp / 1000)).strftime(fmt)
 

@@ -1,7 +1,7 @@
 
 import pandas as pd
 import config
-from utils import parse_epoch
+from utils import parse_grafana_timestamp
 from msword_exporter import MSWordExporter
 from confluence_exporter import ConfluenceExporter
 from grafana_dashboard_handler import GrafanaDashboardHandler
@@ -14,7 +14,7 @@ class ExampleWordExporter(MSWordExporter):
     def render(self, output_dir: str, dashboard_id: str):
         self.add_header(self.title, 1)
         self.add_paragraph("Временной интервал: {} - {}".format(
-            *[parse_epoch(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
+            *[parse_grafana_timestamp(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
         )
 
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
@@ -43,7 +43,7 @@ class ExampleConfluenceExporter(ConfluenceExporter):
     def render(self, output_dir: str, dashboard_id: str):
         # Confluence pages already have a header
         self.add_paragraph("<b>Временной интервал:</b> {} - {}".format(
-            *[parse_epoch(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
+            *[parse_grafana_timestamp(time_stamp=i, time_zone=config.grafana_timezone) for i in (self.time_from, self.time_to)])
         )
         grafana_dashboard_handler = GrafanaDashboardHandler.from_remote(
             dashboard_id=dashboard_id,
