@@ -35,7 +35,7 @@ def datetime_now(fmt: str = REVERSED_DATETIME):
 
 def render_grafana_timestamp(s: str, fmt: str = INFLUXDB_DATETIME, time_zone: str = TIMEZONE):
     tz = timezone(time_zone)
-    return "{:.0f}".format(tz.localize(datetime.strptime(s, fmt)).timestamp() * 1000)
+    return tz.localize(datetime.strptime(s, fmt)).timestamp() * 1000
 
 
 def parse_grafana_timestamp(time_stamp: int, fmt: str = STRAIGHT_DATETIME, time_zone: str = TIMEZONE):
