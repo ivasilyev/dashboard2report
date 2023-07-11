@@ -31,7 +31,7 @@ if is_int_valid(_get("grafana_panel_width")):
 
 grafana_panel_height = 500
 if is_int_valid(_get("grafana_panel_height")):
-    grafana_panel_width = int(_get("grafana_panel_height"))
+    grafana_panel_height = int(_get("grafana_panel_height"))
 
 msword_template_caption_table = "Table {counter} – {title}"
 if is_str_valid(_get("msword_template_caption_table")):
