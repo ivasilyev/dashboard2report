@@ -139,7 +139,7 @@ def validate_directory(s: str):
     if len(s) == 0:
         td = TemporaryDirectory()
         logging.debug(f"Created temporary directory: '{td}'")
-        return td
+        return td.name
     os.makedirs(s, exist_ok=True)
     return os.path.abspath(s)
 
