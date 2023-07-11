@@ -3,8 +3,9 @@ import os
 import logging
 import pandas as pd
 from requests import get
+from pytz import timezone
 from datetime import datetime
-from constants import TIMEZONE, REVERSED_DATETIME, STRAIGHT_DATETIME
+from constants import INFLUXDB_DATETIME, REVERSED_DATETIME, STRAIGHT_DATETIME, TIMEZONE
 
 
 def load_bytes(file: str):
@@ -32,8 +33,12 @@ def datetime_now(fmt: str = REVERSED_DATETIME):
     return datetime.now().strftime(fmt)
 
 
+def render_epoch(s: str, fmt: str = INFLUXDB_DATETIME, time_zone: str = TIMEZONE):
+    tz = timezone(time_zone)
+    tz.localize(datetime.strptime(s, fmt)).timestamp() * 1000
+
+
 def parse_epoch(time_stamp: int, fmt: str = STRAIGHT_DATETIME, time_zone: str = TIMEZONE):
-    from pytz import timezone
     tz = timezone(time_zone)
     return tz.localize(datetime.fromtimestamp(time_stamp / 1000)).strftime(fmt)
 
