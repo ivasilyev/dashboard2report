@@ -40,8 +40,8 @@ class MSWordExporter(Exporter):
         self.add_paragraph()
         if len(title) == 0:
             title = f"Таблица {self._table_counter} – {df.name}"
+        super().add_df()
         self.add_paragraph(title, style="Caption")
-        self._table_counter += 1
         rendering_table = self.document.add_table(rows=1, cols=df.shape[1], style="Table Grid")
         cells = rendering_table.rows[0].cells
         for idx, i in enumerate(df.columns):
@@ -63,8 +63,8 @@ class MSWordExporter(Exporter):
         self.document.add_picture(handler.file, width=self._text_width)
         if len(title) == 0:
             title = f"Рисунок {self._image_counter} – {handler.title}"
+        super().add_image()
         self.add_paragraph(title, style="Caption")
-        self._image_counter += 1
         self.add_paragraph()
 
     def save(self, output_dir: str):

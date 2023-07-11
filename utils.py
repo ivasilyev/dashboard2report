@@ -4,7 +4,7 @@ import logging
 import pandas as pd
 from requests import get
 from datetime import datetime
-from env import TIMEZONE
+from config import grafana_timezone
 from constants import REVERSED_DATETIME, STRAIGHT_DATETIME
 
 
@@ -35,7 +35,7 @@ def datetime_now(fmt: str = REVERSED_DATETIME):
 
 def parse_epoch(timestamp: int, fmt: str = STRAIGHT_DATETIME):
     from pytz import timezone
-    tz = timezone(TIMEZONE)
+    tz = timezone(grafana_timezone)
     return tz.localize(datetime.fromtimestamp(timestamp / 1000)).strftime(fmt)
 
 
@@ -117,6 +117,18 @@ def remove_empty_values(x: list):
 
 def is_dict_valid(d: dict):
     return isinstance(d, dict) and len(d.keys()) > 0
+
+
+def is_bool_valid(b: bool):
+    return isinstance(b, bool)
+
+
+def is_int_valid(i: int):
+    return isinstance(i, int) and i > 0
+
+
+def is_str_valid(s: str):
+    return isinstance(s, str) and len(s) > 0
 
 
 def filename_only(s: str):

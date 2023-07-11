@@ -3,10 +3,10 @@ import os
 import logging
 import urllib.parse as urlparse
 from urllib.parse import urlencode
+import config
 from secret import secret_dict
 from file_handler import FileHandler
 from utils import is_dict_valid, get_file
-from env import GF_PANEL_HEIGHT, GF_PANEL_WIDTH, TIMEZONE
 
 
 class GrafanaPanelHandler(FileHandler):
@@ -52,9 +52,9 @@ class GrafanaPanelHandler(FileHandler):
             "var-Interval": "10s",
             "theme": "light",
             "panelId": self.panel_id,
-            "width": GF_PANEL_WIDTH,
-            "height": GF_PANEL_HEIGHT,
-            "tz": TIMEZONE,
+            "width": config.grafana_panel_width,
+            "height": config.grafana_panel_height,
+            "tz": config.grafana_timezone,
         }
         url_parts = list(urlparse.urlparse(prefix))
         query = dict(urlparse.parse_qsl(url_parts[4]))

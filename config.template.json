@@ -1,9 +1,17 @@
 {
-    "variable": {
+    "variables": {
         "host": [
             "example.1.com",
             "example.2.com"
         ]
     },
-    "verify_ssl": true
+    "grafana_panel_width": 1000,
+    "grafana_panel_height": 500,
+    "grafana_timezone": "UTC",
+    "msword_template_caption_table": "Table {counter} – {title}",
+    "msword_template_caption_image": "Image {counter} – {title}",
+    "confluence_template_caption_table": "<b>Table {counter}</b> – {title}",
+    "confluence_template_caption_image": "<b>Image {counter}</b> – {title}",
+    "confluence_is_verify_ssl": true,
+    "confluence_table_of_contents_caption": "Table of Contents"
 }

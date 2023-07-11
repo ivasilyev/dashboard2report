@@ -8,10 +8,9 @@ from urllib import parse
 from file_handler import FileHandler
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+import config
 from secret import secret_dict
-from config import is_verify_ssl
 from exporter import Exporter
-from env import TABLE_OF_CONTENTS_CAPTION
 from constants import CONFLUENCE_DELAY_SECONDS, CONFLUENCE_PUSH_ATTEMPTS, CONFLUENCE_TEMPLATE_SPOILED_IMAGE
 
 
@@ -53,7 +52,7 @@ class ConfluenceExporter(Exporter):
             url=self.root_url,
             username=secret_dict["confluence_username"],
             password=secret_dict["confluence_password"],
-            verify_ssl=is_verify_ssl
+            verify_ssl=config.confluence_is_verify_ssl
         )
         self.is_connected = True
         self.space_key = self.client.get_page_space(self.parent_page_id)
@@ -62,8 +61,8 @@ class ConfluenceExporter(Exporter):
     def _add(self, *args, **kwargs):
         self.document.append(create_tag(*args, **kwargs))
 
-    def add_table_of_contents(self, caption: str = TABLE_OF_CONTENTS_CAPTION):
-        self._add("p", f"<b id=\"toc\">{caption}</b><ac:structured-macro ac:name=\"toc\" />")
+    def add_table_of_contents(self):
+        self._add("p", f"<b id=\"toc\">{config.confluence_table_of_contents_caption}</b><ac:structured-macro ac:name=\"toc\" />")
 
     def add_header(self, caption: str, level: int):
         self._add(f"h{level}", str(caption))
@@ -72,6 +71,10 @@ class ConfluenceExporter(Exporter):
         self._add("p", str(text))
 
     def add_df(self, df: pd.DataFrame, title: str = "", description: str = ""):
+        if len(title) == 0 and hasattr(df, "name"):
+            title = df.name
+        super().add_df()
+        title = f"<b>Таблица {self._table_counter}</b> – {title}"
         self.add_paragraph(title)
         self._add("div", df.to_html(header=True, index=False), {"class": "table"})
         if len(description) > 0:
@@ -81,14 +84,19 @@ class ConfluenceExporter(Exporter):
         if not os.path.isfile(handler.file):
             logging.critical("The image file does not exist")
             return Tag()
-        logging.debug(f"Add image '{handler.title}'")
+        if len(title) == 0:
+            title = handler.title
+        logging.debug(f"Add image '{title}'")
         body = CONFLUENCE_TEMPLATE_SPOILED_IMAGE.format(
-            title=handler.title,
+            title=title,
             basename=handler.basename,
         )
-        self.attachments[handler.title] = handler
+        self.attachments[title] = handler
         self._add("ac:structured-macro", body, {"ac:name": "expand"})
-        self._image_counter += 1
+        super().add_image()
+        self.add_paragraph(f"<b>Рисунок {self._image_counter}</b> – {title}")
+        if len(description) > 0:
+            self.add_paragraph(description)
         self.add_paragraph()
 
     def push_html(self, page_title: str, page_body: str):

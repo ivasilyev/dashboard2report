@@ -11,8 +11,8 @@ class Exporter:
         self.title = title
 
         self.document = None
-        self._image_counter = 1
-        self._table_counter = 1
+        self._image_counter = 0
+        self._table_counter = 0
 
     def add_header(self, *args, **kwargs):
         pass
@@ -21,12 +21,14 @@ class Exporter:
         pass
 
     def add_df(self, *args, **kwargs):
+        self._table_counter += 1
         pass
 
     def add_blob(self, *args, **kwargs):
         pass
 
     def add_image(self, *args, **kwargs):
+        self._image_counter += 1
         pass
 
     def render(self, *args, **kwargs):
