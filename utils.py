@@ -135,9 +135,11 @@ def filename_only(s: str):
 
 
 def validate_directory(s: str):
-    from tempfile import TemporaryDirectory as tD
+    from tempfile import TemporaryDirectory
     if len(s) == 0:
-        return tD.name
+        td = TemporaryDirectory()
+        logging.debug(f"Created temporary directory: '{td}'")
+        return td
     os.makedirs(s, exist_ok=True)
     return os.path.abspath(s)
 
